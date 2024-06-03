@@ -1,0 +1,99 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+// Base class for employees
+class Employee {
+public:
+    double salary, hourlyRate, taxRate, taxAmount, grossPay, netPay, otPay;
+    int hours, otHours;
+
+    // Set employee variables
+    void setVariables(int empID, string fName, string lName, int stat, double rate, double hrs) {
+        int employeeID = empID;
+        string firstName = fName;
+        string lastName = lName;
+        int payStat = stat;
+        if (payStat == 1) {
+            hourlyRate = rate;
+        } else {
+            salary = rate;
+        }
+        hours = hrs;
+    }
+
+    // Calculate tax amount
+    double calculateTaxAmount() {
+        taxRate = 0.30; // Flat tax rate of 30%
+        taxAmount = grossPay * taxRate;
+        return taxAmount;
+    }
+
+    // Calculate net pay
+    double calculateNetPay() {
+        netPay = grossPay - taxAmount;
+        return netPay;
+    }
+
+    // Print employee data
+    void printData() {
+        cout << setprecision(2) << fixed << fName << setw(6) << lName << setw(6) << empID << setw(10)
+             << hrs << setw(3) << otHours << setw(8) << grossPay << setw(8) << netPay << setw(8) << otPay << endl;
+    }
+};
+
+// Derived class for salary-based employees
+class EmployeeSalary : public Employee {
+public:
+    double calculateGrossPay() {
+        double regPay = hours * hourlyRate;
+        double hourlyRate = (salary / 52) / 40;
+        if (hours > 40) {
+            otHours = hours - 40;
+            otPay = otHours * hourlyRate;
+            grossPay = regPay + otPay;
+        } else if (hours <= 40) {
+            otHours = 0;
+            otPay = 0;
+            grossPay = regPay;
+        }
+        return grossPay;
+    }
+};
+
+// Derived class for hourly-based employees
+class EmployeeHourly : public Employee {
+public:
+    double calculateGrossPay() {
+        regPay = 40 * hourlyRate;
+        if (hours > 40) {
+            otHours = hours - 40;
+            otPay = otHours * hourlyRate * 1.5;
+            grossPay = regPay + otPay;
+        } else {
+            otHours = 0;
+            otPay = 0;
+            grossPay = regPay;
+        }
+        return grossPay;
+    }
+};
+
+int main() {
+    // Example usage
+    EmployeeSalary salariedEmployee;
+    salariedEmployee.setVariables(101, "John", "Doe", 1, 1000.0, 45);
+    salariedEmployee.calculateGrossPay();
+    salariedEmployee.calculateTaxAmount();
+    salariedEmployee.calculateNetPay();
+    salariedEmployee.printData();
+
+    EmployeeHourly hourlyEmployee;
+    hourlyEmployee.setVariables(102, "Jane", "Smith", 2, 20.0, 50);
+    hourlyEmployee.calculateGrossPay();
+    hourlyEmployee.calculateTaxAmount();
+    hourlyEmployee.calculateNetPay();
+    hourlyEmployee.printData();
+
+    return 0;
+}
