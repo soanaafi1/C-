@@ -1,0 +1,75 @@
+#include <iostream>
+using namespace std;
+
+double calculateRegularPay(char gender, int hoursWorked) {
+    double regularRate;
+    if (gender == 'M') {
+        regularRate = 500;
+    } else {
+        regularRate = 550;
+    }
+    return regularRate * hoursWorked;
+}
+
+double calculateOvertimePay(char gender, int overtimeHours) {
+    double overtimeRate;
+    if (gender == 'M') {
+        overtimeRate = 750; // 1.5 times the regular rate for males
+    } else {
+        overtimeRate = 825; // 1.5 times the regular rate for females
+    }
+    return overtimeRate * overtimeHours;
+}
+
+double calculateIncomeTax(double grossPay) {
+    return 0.15 * grossPay;
+}
+
+double calculateNHIL(double grossPay) {
+    return 0.025 * grossPay;
+}
+
+double calculateDistrictTax(double grossPay) {
+    return 0.01 * grossPay;
+}
+
+double calculateEducationalFund(char gender, int numChildren) {
+    if (numChildren > 3) {
+        if (gender == 'M') {
+            return 10 * (numChildren - 3);
+        } else {
+            return 20 * (numChildren - 3);
+        }
+    }
+    return 0;
+}
+
+double calculateNetPay(char gender, int hoursWorked, int numChildren) {
+    int regularHours = min(hoursWorked, 40);
+    int overtimeHours = max(hoursWorked - 40, 0);
+    double regularPay = calculateRegularPay(gender, regularHours);
+    double overtimePay = calculateOvertimePay(gender, overtimeHours);
+    double grossPay = regularPay + overtimePay;
+    double incomeTax = calculateIncomeTax(grossPay);
+    double NHIL = calculateNHIL(grossPay);
+    double districtTax = calculateDistrictTax(grossPay);
+    double educationalFund = calculateEducationalFund(gender, numChildren);
+    return grossPay - incomeTax - NHIL - districtTax - educationalFund;
+}
+
+int main() {
+    char gender;
+    int hoursWorked, numChildren;
+    
+    cout << "Enter gender (M/F): ";
+    cin >> gender;
+    cout << "Enter hours worked: ";
+    cin >> hoursWorked;
+    cout << "Enter number of children: ";
+    cin >> numChildren;
+    
+    double netPay = calculateNetPay(gender, hoursWorked, numChildren);
+    cout << "Net Pay: " << netPay << " cedis" << endl;
+    
+    return 0;
+}
